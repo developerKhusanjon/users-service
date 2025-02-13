@@ -1,34 +1,30 @@
 package com.careers.repository;
 
-import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Mono;
-
-import java.time.Duration;
 
 @Repository
+@RequiredArgsConstructor
 public class UserDocumentRepository {
-    
     private final ReactiveRedisTemplate<String, UserDocument> redisTemplate;
-    private static final String USER_PREFIX = "user:doc:";
-
-    public Mono<Boolean> saveUserDocument(UserDocument user) {
+    
+    public Mono<Boolean> save(UserDocument user) {
         return redisTemplate.opsForJson().set(
-            USER_PREFIX + user.getUserId(), 
-            user, 
+            "user:doc:" + user.getUserId(),
+            user,
             Duration.ofDays(7)
         );
     }
 
-    public Mono<UserDocument> findByEmail(String email) {
-        return redisTemplate.opsForJson().get(USER_PREFIX + "email:" + email);
+    public Mono<UserDocument> findById(String userId) {
+        return redisTemplate.opsForJson().get("user:doc:" + userId);
     }
 
-    @Scheduled(fixedRate = 30000)
-    public void syncSearchIndex() {
-        redisTemplate.execute(RedisScript.of(
-            "FT.CREATE users_idx ON JSON PREFIX 1 user:doc: SCHEMA $.email AS email TEXT $.phone AS phone TAG"
-        )).subscribe();
+    public Flux<UserDocument> searchByEmail(String email) {
+        return redisTemplate.opsForSearch().search(
+            UserDocument.INDEX,
+            "@email:" + email,
+            UserDocument.class
+        );
     }
 }

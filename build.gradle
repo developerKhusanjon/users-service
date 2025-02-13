@@ -1,11 +1,10 @@
-import groovy.lang.Closure
-
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.0'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id 'org.graalvm.buildtools.native' version '0.9.28'
 	id 'org.liquibase.gradle' version '2.2.0'
+	id 'com.google.cloud.tools.jib' version '3.4.0'
 }
 
 group = 'com.careers'
@@ -39,32 +38,38 @@ repositories {
 dependencies {
 	// Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Database
-	implementation 'org.postgresql:r2dbc-postgresql:1.0.2.RELEASE'
+	runtimeOnly 'org.postgresql:r2dbc-postgresql:1.0.2.RELEASE'
 	implementation 'org.liquibase:liquibase-core'
 
 	// Redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation 'com.redislabs:lettusearch:3.1.2'
 	implementation 'com.redis.om:redis-om-spring:0.8.0'
+	implementation 'io.lettuce:lettuce-core:6.2.4.RELEASE'
 
 	// Security
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3',
-			'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	// Utilities
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 	implementation 'io.netty:netty-all:4.1.94.Final'
-	implementation 'com.twilio.sdk:twilio:9.8.0'
+	implementation 'com.twilio.sdk:twilio:10.5.0'
 	implementation 'com.google.cloud:google-cloud-storage:2.28.0'
 
-	// Observability
-	implementation 'io.micrometer:micrometer-registry-prometheus'
+	// GCP
+	implementation 'com.google.cloud:google-cloud-storage:2.28.1'
+
+	// Utilities
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+	implementation 'org.apache.commons:commons-lang3:3.13.0'
+	implementation 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -1,0 +1,10 @@
+jwt:
+  access-expiration: 15m
+  refresh-expiration: 7d
+  key-alias: jwt-key
+  keystore-password: ${JWT_KEYSTORE_PASSWORD}
+
+redis:
+  host: localhost
+  port: 6379
+  timeout: 5000
