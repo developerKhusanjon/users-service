@@ -1,16 +1,18 @@
 package com.careers.services;
 
-import com.google.cloud.storage.*;
 import com.careers.exception.ImageUploadException;
 import com.careers.model.User;
 import com.careers.repository.RedisUserRepository;
-import com.careers.util.FileUtils;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ImageService {
@@ -68,7 +70,8 @@ public class ImageService {
     private String generateSignedUrl(String imageId) {
         return storage.signUrl(
                 BlobInfo.newBuilder(bucketName, imageId).build(),
-                7, // URL valid for 7 days
+                7,
+                TimeUnit.DAYS,// URL valid for 7 days
                 Storage.SignUrlOption.withV4Signature()
         ).toString();
     }

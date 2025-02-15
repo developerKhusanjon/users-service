@@ -4,7 +4,51 @@ jwt:
   key-alias: jwt-key
   keystore-password: ${JWT_KEYSTORE_PASSWORD}
 
-redis:
-  host: localhost
-  port: 6379
-  timeout: 5000
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  service-sid: ${TWILIO_SERVICE_SID} # For Verify API
+  from-number: +1234567890 # Fallback number
+  rate-limit:
+    max-attempts: 5
+    window-duration: 10m
+
+gcp:
+  storage:
+    project-id: your-project-id
+    bucket-name: user-avatars
+    credentials-location: classpath:gcp-credentials.json
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+    reactor.netty: DEBUG
+
+spring:
+  r2dbc:
+    url: r2dbc:pool:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/usersdb
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:secret}
+    pool:
+      max-size: 200
+      initial-size: 10
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    timeout: 5000ms
+    lettuce:
+      pool:
+        max-active: 200
+        max-idle: 50
+        min-idle: 10
+
+  mail:
+    host: ${SMTP_HOST:smtp.example.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:user}
+    password: ${SMTP_PASSWORD:pass}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
