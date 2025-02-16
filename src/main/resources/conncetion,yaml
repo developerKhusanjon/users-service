@@ -1,0 +1,8 @@
+# pgBouncer pool.ini
+[databases]
+usersdb = host=postgres dbname=usersdb pool_size=200 reserve_pool=50
+
+[pgbouncer]
+pool_mode = transaction
+max_client_conn = 5000
+default_pool_size = 200

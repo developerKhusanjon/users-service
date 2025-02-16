@@ -1,3 +1,7 @@
+server:
+  port: 8080
+  max-http-header-size: 16KB
+
 jwt:
   access-expiration: 15m
   refresh-expiration: 7d
@@ -25,14 +29,37 @@ logging:
     org.springframework: WARN
     reactor.netty: DEBUG
 
+graalvm:
+  native:
+    memory:
+      max-heap: 1G
+      stack-size: 1M
+
+netty:
+  leak-detection: DISABLED
+  max-order: 3
+  thread:
+    boss: 2
+    worker: 8
+
 spring:
   r2dbc:
-    url: r2dbc:pool:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/usersdb
-    username: ${DB_USER:admin}
-    password: ${DB_PASSWORD:secret}
+    url: r2dbc:pool:postgresql://pgbouncer:6432/usersdb?prepareThreshold=0
+    username: ${DB_USER}
+    password: ${DB_PASS}
     pool:
-      max-size: 200
-      initial-size: 10
+      max-size: 500
+      initial-size: 50
+      max-idle-time: 30m
+
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
+    enabled: true
+
+  pgbouncer:
+    pool-mode: transaction
+    default-pool-size: 200
+    reserve-pool-size: 50
 
   redis:
     host: ${REDIS_HOST:localhost}
@@ -40,9 +67,10 @@ spring:
     timeout: 5000ms
     lettuce:
       pool:
-        max-active: 200
-        max-idle: 50
-        min-idle: 10
+        max-active: 512
+        max-idle: 256
+        min-idle: 64
+        max-wait: 10s
 
   mail:
     host: ${SMTP_HOST:smtp.example.com}

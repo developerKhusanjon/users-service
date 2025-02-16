@@ -1,0 +1,8 @@
+FT.CREATE users-idx
+  ON JSON
+  PREFIX 1 users-doc:
+  SCHEMA
+    $.email AS email TEXT
+    $.phone AS phone TAG
+    $.socialId AS socialId TAG
+    $.createdAt AS createdAt NUMERIC SORTABLE
